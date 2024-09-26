@@ -1,6 +1,8 @@
 use std::f32::consts::*;
+use bevy::input::ButtonState;
+use bevy::prelude::*;
 
-use bevy::{input::mouse::MouseMotion, math::Vec3Swizzles, prelude::*};
+use bevy::{input::mouse::{MouseButtonInput, MouseMotion}, math::Vec3Swizzles, prelude::*};
 use bevy_rapier3d::prelude::*;
 
 /// Manages the FPS controllers. Executes in `PreUpdate`, after bevy's internal
@@ -47,6 +49,8 @@ impl Plugin for FpsControllerPlugin {
                 .after(gamepad::gamepad_event_system)
                 .after(touch::touch_screen_input_system),
         );
+        // Add mouse click system to handle mouse events
+        app.add_systems(PreUpdate, mouse_click_system);
     }
 }
 
@@ -189,6 +193,33 @@ const ANGLE_EPSILON: f32 = 0.001953125;
 const GROUNDED_DISTANCE: f32 = 0.125;
 
 const SLIGHT_SCALE_DOWN: f32 = 0.9375;
+
+// System to handle mouse clicks
+pub fn mouse_click_system(
+    mut mouse_button_input_events: EventReader<MouseButtonInput>,
+) {
+    for event in mouse_button_input_events.read() {
+        if event.button == MouseButton::Left && event.state == ButtonState::Pressed {
+            // Trigger your custom function here when left mouse button is clicked
+            handle_left_click();
+        }
+
+        if event.button == MouseButton::Right && event.state == ButtonState::Pressed {
+            // Trigger another function for right-click if needed
+            handle_right_click();
+        }
+    }
+}
+
+// Example function for handling left-click
+fn handle_left_click() {
+    println!("Left mouse button clicked!");
+}
+
+// Example function for handling right-click
+fn handle_right_click() {
+    println!("Right mouse button clicked!");
+}
 
 pub fn fps_controller_input(
     key_input: Res<ButtonInput<KeyCode>>,
